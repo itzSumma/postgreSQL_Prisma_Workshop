@@ -13,3 +13,22 @@ datasource db {
 }
 
 
+model User{
+  id String @id @default(uuid())
+  name String
+  username String
+  email String 
+  password String
+  role UserRole @default(User)
+  avatar String?
+  @@map("users")
+  @@unique([email,username])
+@@index([email,username])
+}
+
+enum UserRole{
+  User
+  Admin
+  Manager
+
+}
