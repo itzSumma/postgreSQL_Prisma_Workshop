@@ -307,3 +307,99 @@ PostgreSQL Table
      ↓
    orders
 ```
+## OrderItem Schema Design
+
+```text
+OrderItem
+│
+├── id
+│   └── আমি কে? → Primary Key (PK)
+│
+├── orderId
+│   └── আমি কোন Order-এর অংশ? → Foreign Key (FK)
+│
+├── productId
+│   └── কোন Product কেনা হয়েছে? → Foreign Key (FK)
+│
+├── quantity
+│   └── Product কতটা কেনা হয়েছে?
+│
+├── price
+│   └── Order করার সময় Product-এর price কত ছিল?
+│
+├── order
+│   └── আমি কোন Order-এর?
+│       → Order relation
+│
+├── product
+│   └── আমি কোন Product?
+│       → Product relation
+│
+├── createdAt
+│   └── আমি কখন তৈরি হয়েছি?
+│
+├── @@unique([orderId, productId])
+│   └── একই Order + একই Product
+│       একাধিক OrderItem হতে পারবে না
+│
+└── @@map("order_items")
+    └── Database table → order_items
+```
+
+### Relationship
+
+```text
+             Order
+          id = O1 (PK)
+               │
+               │ orderId (FK)
+               ↓
+          OrderItem
+        ┌──────────────┐
+        │ quantity = 2 │
+        │ price = 1000 │
+        └──────┬───────┘
+               │
+               │ productId (FK)
+               ↓
+            Product
+          id = P1 (PK)
+```
+
+### Logic
+
+```text
+Order
+  ↓
+কোন Product?
+  ↓
+OrderItem
+  ↓
+কত quantity?
+  ↓
+quantity
+  ↓
+Order করার সময় price কত ছিল?
+  ↓
+price
+```
+
+### Example
+
+```text
+Order #101
+│
+├── Niacinamide Serum
+│   ├── quantity = 2
+│   └── price = ৳1000
+│
+├── CeraVe Cleanser
+│   ├── quantity = 1
+│   └── price = ৳800
+│
+└── Sunscreen
+    ├── quantity = 1
+    └── price = ৳700
+```
+
+
