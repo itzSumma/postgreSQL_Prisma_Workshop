@@ -1,16 +1,23 @@
-import { Router, Request, Response } from "express";
-import prisma from "@/lib/prisma";
+import { Router } from "express";
+import users from "../services/users";
+
+// import products from "../services/products";
+// import categories from "../services/categories";
+// import cartItems from "../services/cartItems";
+// import orders from "../services/orders";
 
 const router = Router();
 
-// Get all users
-router.get("/", async (req: Request, res: Response) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.json({ success: true, data: users });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+/**
+ * User Routes Registration
+ * Endpoint: /api/users
+ */
+router.use("/users", users);
+
+// বাকিগুলো পরবর্তীতে এক এক করে আনব
+// router.use("/products", products);
+// router.use("/categories", categories);
+// router.use("/cart-items", cartItems);
+// router.use("/orders", orders);
 
 export default router;
