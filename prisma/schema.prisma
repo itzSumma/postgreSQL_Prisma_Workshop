@@ -12,23 +12,25 @@ datasource db {
   provider = "postgresql"
 }
   
-
+enum UserRole{
+  Admin
+  Customer
+ }
 model User{
   id String @id @default(uuid())
   name String
-
   email String @unique
   password String
-  role UserRole @default(User)
+  role UserRole @default(Customer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   orders Orders[]
+ cartItems CartItem[]
   @@map("users")
  
 }
 
-enum UserRole{
-  User
-  Admin
- }
+
 
  model Product {
   id String @id @default(uuid())
@@ -40,9 +42,16 @@ stock Int
  }
 
  model Orders{
+quantity Int
 id String @id @default(uuid())
 userId String
 user  User @relation(fields: [userId], references: [id])
-quantity Int
-
  }
+
+model CartItem{
+  id String @id @default(uuid())
+userId String
+   user User @relation(fields: [userId], references: [id])
+}
+
+
