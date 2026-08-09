@@ -199,3 +199,111 @@ Quantity: 2
 ```
 
 অর্থাৎ, **CartItem হলো একজন User-এর cart-এ কোন Product কত quantity আছে—সেটার connection/record।**
+
+## Order Schema Design
+
+```text
+Order
+│
+├── id
+│   └── আমি কে? → Primary Key (PK)
+│
+├── userId
+│   └── কে আমাকে order করেছে? → Foreign Key (FK)
+│
+├── totalAmount
+│   └── আমার total price কত?
+│
+├── status
+│   └── আমি এখন কোন অবস্থায় আছি?
+│       → PENDING / CONFIRMED / SHIPPED / DELIVERED / CANCELLED
+│
+├── isDeleted
+│   └── আমাকে Soft Delete করা হয়েছে?
+│
+├── createdAt
+│   └── আমি কখন তৈরি হয়েছি?
+│
+├── updatedAt
+│   └── সর্বশেষ কখন update হয়েছি?
+│
+├── user
+│   └── আমার User কে?
+│       → User relation
+│
+└── orderItems
+    └── আমার মধ্যে কয়টা Product আছে?
+        → অনেক → []
+```
+
+### Relationship
+
+```text
+             User
+          id = U1 (PK)
+               │
+               │ userId (FK)
+               ↓
+             Order
+        ┌───────────────┐
+        │ totalAmount   │
+        │ status        │
+        └───────┬───────┘
+                │
+                │ 1 → Many
+                ↓
+            OrderItem
+           /         \
+          ↓           ↓
+       Product     quantity
+```
+
+### Logic
+
+```text
+User
+  ↓
+কে Order করেছে?
+  ↓
+Order
+  ↓
+কত টাকার Order?
+  ↓
+totalAmount
+  ↓
+Order-এর status কী?
+  ↓
+PENDING → CONFIRMED → SHIPPED → DELIVERED
+                    ↘
+                     CANCELLED
+  ↓
+Order-এর মধ্যে কোন কোন Product আছে?
+  ↓
+OrderItem[]
+```
+```text
+Example:
+
+User: Summa
+       ↓
+Order #O1
+       │
+       ├── Niacinamide Serum × 2
+       ├── CeraVe Cleanser × 1
+       └── Sunscreen × 1
+
+Total Amount = ৳3500
+Status = PENDING
+```
+
+### Database Mapping
+
+```text
+Prisma Model
+     ↓
+   Order
+     ↓
+PostgreSQL Table
+     ↓
+   orders
+```
