@@ -39,15 +39,24 @@ model Category{
   updatedAt DateTime @updatedAt
   products Product[]
   @@map("categories")
-  
+
 }
 
  model Product {
   id String @id @default(uuid())
   title String 
+  categoryId String
 description String?
-price Int
+price Float
 stock Int
+imageUrl String?
+category Category @relation (fields:[categoryId],references:[id])
+isDeleted Boolean @default(false)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+cartItems CartItem[]
+oderItems OderItem[]
+
 @@map ("products")
  }
 
@@ -61,7 +70,14 @@ user  User @relation(fields: [userId], references: [id])
 model CartItem{
   id String @id @default(uuid())
 userId String
-   user User @relation(fields: [userId], references: [id])
+productId String
+quantity Int @default(1)
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+   products Product @relation(fields:[productId], references:[id],onDelete: Cascade)
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+   @@unique([userId, productId])
+   @@map("cart_items")
 }
 
 
