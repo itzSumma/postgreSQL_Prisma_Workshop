@@ -16,6 +16,16 @@ enum UserRole{
   Admin
   Customer
  }
+
+ enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+
 model User{
   id String @id @default(uuid())
   name String
@@ -25,7 +35,7 @@ model User{
   isDeleted Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  orders Orders[]
+  orders Order[]
  cartItems CartItem[]
   @@map("users")
  
